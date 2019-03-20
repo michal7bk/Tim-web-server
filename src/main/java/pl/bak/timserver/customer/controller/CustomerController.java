@@ -1,14 +1,17 @@
 package pl.bak.timserver.customer.controller;
 
+import com.google.gson.JsonObject;
+import org.modelmapper.ModelMapper;
+import org.springframework.expression.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.customer.domain.Customer;
+import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.service.CustomerService;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.TrainingDto;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -16,22 +19,20 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final ModelMapper modelMapper;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, ModelMapper modelMapper) {
         this.customerService = customerService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
     public List<Customer> findCUstomers() {
-//        return customerService.findCustomers();
-        List<Customer> array = new ArrayList<>();
-        Customer customer = Customer.builder().id(100L).name("Dsdsds").surname("no i piknie").build();
-        array.add(customer);
-        return array;
+        return customerService.findCustomers();
     }
 
     @GetMapping(value = "/{id}")
-    public Customer findCUstomer(@PathVariable Long id) {
+    public CustomerInfoDto findCustomer(@PathVariable Long id) {
         return customerService.findCustomer(id);
     }
 
@@ -49,15 +50,31 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{id}/trainings")
-    public List<Training> findCustomerTrainings(@PathVariable Long id) {
+    public List<TrainingDto> findCustomerTrainings(@PathVariable Long id) {
         return customerService.findCustomerTrainings(id);
     }
 
-    @PostMapping(value = "/training")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Training proposeTraining(@RequestBody @Valid Training training) {
-        return customerService.proposeTraining(training);
 
+    @GetMapping(value = "/{id}/planned-trainings")
+    public String countPlannedTrainings(@PathVariable Long id) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(customerService.getCountPlannedTrainings(id)));
+        return result.toString();
     }
 
+
+    @GetMapping(value = "/{id}/completed-trainings")
+    public String countCompletedTrainings(@PathVariable Long id) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(customerService.getCountCompletedTrainings(id)));
+        return result.toString();
+    }
+
+    private TrainingDto convertToDto(Training training) {
+        return modelMapper.map(training, TrainingDto.class);
+    }
+
+    private Training convertToEntity(TrainingDto postDto) throws ParseException {
+        return modelMapper.map(postDto, Training.class);
+    }
 }

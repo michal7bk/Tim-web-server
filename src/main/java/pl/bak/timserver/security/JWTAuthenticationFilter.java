@@ -3,6 +3,7 @@ package pl.bak.timserver.security;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,11 +28,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private AuthenticationManager authenticationManager;
+    private final UserDetailsServiceImpl userDetailsService;
 
 
-
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    JWTAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsService) {
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -63,23 +65,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        ApplicationUser user = userDetailsService.getUserByUsername(((User) auth.getPrincipal()).getUsername());
+        JsonObject responseJSON = new JsonObject();
+        responseJSON.addProperty("name", user.getName());
+        responseJSON.addProperty("email", user.getEmail());
+        responseJSON.addProperty("surname", user.getSurname());
+        responseJSON.addProperty("roles", user.getRoles().toString());
+        responseJSON.addProperty("id", user.getId());
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         PrintWriter writer = res.getWriter();
-        writer.print("{\"name\":\""+ ((User) auth.getPrincipal()).getUsername()+"\"}");
+        writer.print(responseJSON);
         writer.flush();
     }
 
-//    private String[] getCredFromBasic(String authorization) {
-//        String[] values = new String[0];
-//        if (authorization != null && authorization.toLowerCase().startsWith("basic")) {
-//            // Authorization: Basic base64credentials
-//            String base64Credentials = authorization.substring("Basic".length()).trim();
-//            byte[] credDecoded = Base64.getDecoder().decode(base64Credentials);
-//            String credentials = new String(credDecoded, StandardCharsets.UTF_8);
-//            // credentials = name:password
-//            values = credentials.split(":", 2);
-//        }
-//        return values;
-//    }
 }

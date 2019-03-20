@@ -3,6 +3,7 @@ package pl.bak.timserver.coach.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.coach.domain.Coach;
+import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.service.CoachService;
 import pl.bak.timserver.training.domain.Training;
 
@@ -25,7 +26,7 @@ public class CoachController {
     }
 
     @GetMapping(value = "/{id}")
-    public Coach findCoach(@PathVariable Long id) {
+    public CoachInfoDto findCoach(@PathVariable Long id) {
         return coachService.findCoach(id);
     }
 

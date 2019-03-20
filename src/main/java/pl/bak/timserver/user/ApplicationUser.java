@@ -1,6 +1,8 @@
 package pl.bak.timserver.user;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +13,17 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
+@Getter
+@Setter
 public class ApplicationUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotNull
     private String name;
+
+    private String surname;
+
     @NotNull
     private String password;
 
@@ -27,19 +34,10 @@ public class ApplicationUser implements Serializable {
     private boolean active = true;
 
     @Builder.Default()
-    private String roles = "user";
+    private Roles roles = Roles.customer;
 
-    public String getName() {
-        return name;
+    public enum Roles {
+        customer, coach
     }
 
-    public void setName(String name){ this.name= name;}
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

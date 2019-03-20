@@ -1,7 +1,10 @@
 package pl.bak.timserver.coach.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import pl.bak.timserver.training.domain.Training;
@@ -14,6 +17,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "coach")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Coach {
 
     @Id
@@ -27,15 +33,12 @@ public class Coach {
     @Email
     public String email;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "coach")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    public List<Training> acceptedTrainings;
+    public String password;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "coach")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    public List<Training> proposedTrainings;
+    public List<Training> trainings;
 
 
 }

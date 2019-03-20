@@ -18,9 +18,9 @@ public class TrainingController {
     }
 
 
-    @GetMapping(value = "/{id}")
-    public Training findTraining(@PathVariable Long id) {
-        return trainingService.findTraining(id);
+    @GetMapping(value = "/{training_id}")
+    public Training findTraining(@PathVariable Long training_id) {
+        return trainingService.findTraining(training_id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -29,15 +29,21 @@ public class TrainingController {
         return trainingService.save(Training);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Long id) {
-        trainingService.delete(id);
+    @PostMapping(value = "/training")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Training proposeTraining(@RequestBody @Valid Training training) {
+        return trainingService.proposeTraining(training);
     }
 
-    @PutMapping(value = "/accept")
-    public Training acceptTraining(@RequestBody @Valid Training training) {
-        return trainingService.acceptTraining(training);
+    @RequestMapping(value = "/{training_id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("training_id") Long training_id) {
+        trainingService.delete(training_id);
+    }
+
+    @PutMapping(value = "/{training_id}/accept")
+    public Training acceptTraining(@PathVariable Long training_id) {
+        return trainingService.acceptTraining(training_id);
     }
 
 

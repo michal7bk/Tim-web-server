@@ -1,6 +1,9 @@
 package pl.bak.timserver.training.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.customer.domain.Customer;
 
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "TRAINING")
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Training {
 
     @Id
@@ -26,6 +32,9 @@ public class Training {
 
     public LocalDateTime startTime;
     public LocalDateTime endTime;
+
+    public String info;
+    public boolean accepted;
 
 
 }

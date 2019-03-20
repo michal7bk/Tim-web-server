@@ -39,7 +39,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     private JWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception {
-        final JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager());
+        final JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManager(), userDetailsService);
         filter.setFilterProcessesUrl("/auth/user");
         return filter;
     }

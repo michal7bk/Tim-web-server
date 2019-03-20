@@ -1,60 +1,97 @@
 package pl.bak.timserver.customer.service;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.repository.CoachRepository;
 import pl.bak.timserver.customer.domain.Customer;
+import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.repository.CustomerRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.TrainingDto;
+import pl.bak.timserver.user.ApplicationUser;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
 
     final private CustomerRepository customerRepository;
     final private CoachRepository coachRepository;
+    private final ModelMapper modelMapper;
 
-    public CustomerService(CustomerRepository customerRepository, CoachRepository coachRepository) {
+    public CustomerService(CustomerRepository customerRepository, CoachRepository coachRepository, ModelMapper modelMapper) {
         this.customerRepository = customerRepository;
         this.coachRepository = coachRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<Customer> findCustomers() {
         return customerRepository.findAll();
     }
 
-    public Customer findCustomer(Long id) {
-        return customerRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
+    public CustomerInfoDto findCustomer(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
+        return convertToDto(customer);
     }
 
     public Customer save(Customer customer) {
-        if (customerRepository.findByEmail(customer.getEmail()) == null)
+        if (!customerRepository.findByEmail(customer.getEmail()).isPresent())
             return customerRepository.save(customer);
         else throw new ConflictWithExistingException(Customer.class, customer.getId());
 
     }
 
     public void delete(Long id) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        customerRepository.delete(customer.get());
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(()->new ObjectNotFoundExcpetion(Customer.class,id));
+        customerRepository.delete(customer);
     }
 
-    public List<Training> findCustomerTrainings(Long id) {
+    public List<TrainingDto> findCustomerTrainings(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
-        return customer.trainings;
+        return customer.trainings.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
-    public Training proposeTraining(Training training) {
-        Coach coach = training.getCoach();
-        coach.getProposedTrainings().add(training);
-        return training;
 
-
+    public long getCountCompletedTrainings(Long customer_id) {
+        Customer customer = customerRepository.findById(customer_id)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customer_id));
+        List<Training> trainings = customer.getTrainings();
+        return trainings.stream().map(x -> x.getStartTime().isBefore(LocalDateTime.now())).count();
     }
+
+    public long getCountPlannedTrainings(Long customer_id) {
+        Customer customer = customerRepository.findById(customer_id)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customer_id));
+        List<Training> trainings = customer.getTrainings();
+        return trainings.stream().map(x -> x.getStartTime().isAfter(LocalDateTime.now())).count();
+    }
+
+    private CustomerInfoDto convertToDto(Customer customer) {
+        return modelMapper.map(customer, CustomerInfoDto.class);
+    }
+
+    private TrainingDto convertToDto(Training training) {
+        return modelMapper.map(training, TrainingDto.class);
+    }
+
+    private Training convertToEntity(TrainingDto postDto) throws ParseException {
+        return modelMapper.map(postDto, Training.class);
+    }
+
+
+    public Customer matchCustomerByUser(ApplicationUser user) {
+        return customerRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, user.getId()));
+    }
+
 
 }
