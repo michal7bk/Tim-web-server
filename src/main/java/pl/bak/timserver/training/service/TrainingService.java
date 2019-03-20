@@ -41,7 +41,8 @@ public class TrainingService {
                 .orElseThrow(() -> new objectNotFoundExcpetion(Training.class, id));
     }
 
-    public TrainingDto proposeTraining(Training training) {
+    public TrainingDto proposeTraining(TrainingDto trainingDto) {
+        Training training = convertToEntity(trainingDto);
         training.setAccepted(false);
         Coach coach = coachRepository.findById(training.getCoach().getId())
                 .orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, training.getCoach().getId()));
@@ -59,11 +60,11 @@ public class TrainingService {
         trainingRepository.deleteById(id);
     }
 
-    public Training acceptTraining(Long trainingId) {
+    public TrainingDto acceptTraining(Long trainingId) {
         Training trainingToUpdate = trainingRepository.findById(trainingId)
                 .orElseThrow(() -> new objectNotFoundExcpetion(Training.class, trainingId));
         trainingToUpdate.setAccepted(true);
-        return trainingToUpdate;
+        return convertToDto(trainingToUpdate);
     }
 
     private boolean overlapsWithExisting(Training training) {

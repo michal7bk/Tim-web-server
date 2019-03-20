@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class CoachTrainingsDto {
+    public Long id;
     public String name;
     public String surname;
     public String email;

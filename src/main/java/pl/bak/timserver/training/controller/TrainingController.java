@@ -33,8 +33,8 @@ public class TrainingController {
 
     @PostMapping(value = "/propose")
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainingDto proposeTraining(@RequestBody @Valid Training training) {
-        return trainingService.proposeTraining(training);
+    public TrainingDto proposeTraining(@RequestBody @Valid TrainingDto trainingDto) {
+        return trainingService.proposeTraining(trainingDto);
     }
 
     @RequestMapping(value = "/{training_id}", method = RequestMethod.DELETE)
@@ -44,7 +44,7 @@ public class TrainingController {
     }
 
     @PutMapping(value = "/{training_id}/accept")
-    public Training acceptTraining(@PathVariable Long training_id) {
+    public TrainingDto acceptTraining(@PathVariable Long training_id) {
         return trainingService.acceptTraining(training_id);
     }
 
