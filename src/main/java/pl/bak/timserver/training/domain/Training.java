@@ -34,7 +34,8 @@ public class Training {
     public LocalDateTime endTime;
 
     public String info;
-    public boolean accepted;
+    @Builder.Default
+    public boolean accepted = false;
 
 
 }

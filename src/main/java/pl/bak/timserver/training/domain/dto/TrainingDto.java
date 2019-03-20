@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingDto {
+    public Long id;
     public CustomerTrainingsDto customer;
     public CoachTrainingsDto coach;
     public LocalDateTime startTime;

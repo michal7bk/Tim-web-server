@@ -1,5 +1,7 @@
 package pl.bak.timserver.training.service;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.repository.CoachRepository;
@@ -8,6 +10,7 @@ import pl.bak.timserver.customer.repository.CustomerRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.repository.TrainingRepository;
 
 import java.time.LocalDateTime;
@@ -20,11 +23,13 @@ public class TrainingService {
     final private TrainingRepository trainingRepository;
     final private CoachRepository coachRepository;
     final private CustomerRepository customerRepository;
+    final private ModelMapper modelMapper;
 
-    public TrainingService(TrainingRepository trainingRepository, CoachRepository coachRepository, CustomerRepository customerRepository) {
+    public TrainingService(TrainingRepository trainingRepository, CoachRepository coachRepository, CustomerRepository customerRepository, ModelMapper modelMapper) {
         this.trainingRepository = trainingRepository;
         this.coachRepository = coachRepository;
         this.customerRepository = customerRepository;
+        this.modelMapper = modelMapper;
     }
 
     public Training save(Training training) {
@@ -36,7 +41,7 @@ public class TrainingService {
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Training.class, id));
     }
 
-    public Training proposeTraining(Training training) {
+    public TrainingDto proposeTraining(Training training) {
         training.setAccepted(false);
         Coach coach = coachRepository.findById(training.getCoach().getId())
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, training.getCoach().getId()));
@@ -45,11 +50,10 @@ public class TrainingService {
         if (!overlapsWithExisting(training)) {
             coach.getTrainings().add(training);
             customer.getTrainings().add(training);
-            return trainingRepository.save(training);
+            return convertToDto(trainingRepository.save(training));
         } else
             throw new ConflictWithExistingException(Training.class, training.id);
     }
-
 
     public void delete(Long id) {
         trainingRepository.deleteById(id);
@@ -72,6 +76,15 @@ public class TrainingService {
                 return true;
         }
         return false;
+    }
+
+
+    private TrainingDto convertToDto(Training training) {
+        return modelMapper.map(training, TrainingDto.class);
+    }
+
+    private Training convertToEntity(TrainingDto postDto) throws ParseException {
+        return modelMapper.map(postDto, Training.class);
     }
 
 }
