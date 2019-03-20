@@ -17,21 +17,19 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final ModelMapper modelMapper;
 
     public CustomerController(CustomerService customerService, ModelMapper modelMapper) {
         this.customerService = customerService;
-        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
-    public List<Customer> findCUstomers() {
+    public List<Customer> findCustomers() {
         return customerService.findCustomers();
     }
 
-    @GetMapping(value = "/{id}")
-    public CustomerInfoDto findCustomer(@PathVariable Long id) {
-        return customerService.findCustomer(id);
+    @GetMapping(value = "/{customerId}")
+    public CustomerInfoDto findCustomer(@PathVariable Long customerId) {
+        return customerService.findCustomer(customerId);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -40,28 +38,28 @@ public class CustomerController {
         return customerService.save(customer);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{customerId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Long id) {
-        customerService.delete(id);
+    public void delete(@PathVariable("customerId") Long customerId) {
+        customerService.delete(customerId);
     }
 
-    @GetMapping(value = "/{id}/trainings")
-    public List<TrainingDto> findCustomerTrainings(@PathVariable Long id) {
-        return customerService.findCustomerTrainings(id);
+    @GetMapping(value = "/{customerId}/trainings")
+    public List<TrainingDto> findCustomerTrainings(@PathVariable Long customerId) {
+        return customerService.findCustomerTrainings(customerId);
     }
 
-    @GetMapping(value = "/{id}/planned-trainings")
-    public String countPlannedTrainings(@PathVariable Long id) {
+    @GetMapping(value = "/{customerId}/planned-trainings")
+    public String countPlannedTrainings(@PathVariable Long customerId) {
         JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.getCountPlannedTrainings(id)));
+        result.addProperty("count", String.valueOf(customerService.getCountPlannedTrainings(customerId)));
         return result.toString();
     }
 
-    @GetMapping(value = "/{id}/completed-trainings")
-    public String countCompletedTrainings(@PathVariable Long id) {
+    @GetMapping(value = "/{customerId}/completed-trainings")
+    public String countCompletedTrainings(@PathVariable Long customerId) {
         JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.getCountCompletedTrainings(id)));
+        result.addProperty("count", String.valueOf(customerService.getCountCompletedTrainings(customerId)));
         return result.toString();
     }
 

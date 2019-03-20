@@ -1,8 +1,8 @@
 package pl.bak.timserver.exception;
 
-public class ObjectNotFoundExcpetion extends RuntimeException {
+public class objectNotFoundExcpetion extends RuntimeException {
 
-    public ObjectNotFoundExcpetion(Class clazz, Long id) {
+    public objectNotFoundExcpetion(Class clazz, Long id) {
         super("Could not find " + clazz.getSimpleName() + " with ID: " + id);
     }
 }

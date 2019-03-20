@@ -27,7 +27,7 @@ import static pl.bak.timserver.security.SecurityConstants.*;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
 
 

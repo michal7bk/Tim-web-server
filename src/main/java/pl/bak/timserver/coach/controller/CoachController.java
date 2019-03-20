@@ -25,9 +25,9 @@ public class CoachController {
         return coachService.findCoaches();
     }
 
-    @GetMapping(value = "/{id}")
-    public CoachInfoDto findCoach(@PathVariable Long id) {
-        return coachService.findCoach(id);
+    @GetMapping(value = "/{coachId}")
+    public CoachInfoDto findCoach(@PathVariable Long coachId) {
+        return coachService.findCoach(coachId);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -36,13 +36,13 @@ public class CoachController {
         return coachService.save(coach);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{coachId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Long id) {
-        coachService.delete(id);
+    public void delete(@PathVariable("coachId") Long coachId) {
+        coachService.delete(coachId);
     }
 
-    @GetMapping(value = "/{coach_id}/trainings")
+    @GetMapping(value = "/{coach_id}/accepted-trainings")
     public List<Training> findAcceptedTrainings(@PathVariable Long coach_id){
         return coachService.findAcceptedTrainings(coach_id);
     }

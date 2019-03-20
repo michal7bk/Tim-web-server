@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class ApplicationUserController {
 
-    private ApplicationUserService applicationUserService;
+    private final ApplicationUserService applicationUserService;
 
 
     public ApplicationUserController(ApplicationUserService applicationUserService) {
@@ -21,6 +21,6 @@ public class ApplicationUserController {
     @GetMapping("/{name}")
     public ApplicationUser get(@PathVariable() String name) {
 
-        return applicationUserService.findbyName(name);
+        return applicationUserService.findByName(name);
     }
 }

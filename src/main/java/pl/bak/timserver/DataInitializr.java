@@ -23,11 +23,11 @@ import static java.time.LocalDateTime.now;
 @Component
 public class DataInitializr implements ApplicationRunner {
 
-    private List<Customer> customers = new ArrayList<>();
-    private List<Coach> coaches = new ArrayList<>();
-    private List<Training> trainings1 = new ArrayList<>();
-    private List<Training> trainings2 = new ArrayList<>();
-    private List<ApplicationUser> applicationUsers = new ArrayList<>();
+    private final List<Customer> customers = new ArrayList<>();
+    private final List<Coach> coaches = new ArrayList<>();
+    private final List<Training> trainings1 = new ArrayList<>();
+    private final List<Training> trainings2 = new ArrayList<>();
+    private final List<ApplicationUser> applicationUsers = new ArrayList<>();
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final CustomerRepository customerRepository;
     private final CoachRepository coachRepository;

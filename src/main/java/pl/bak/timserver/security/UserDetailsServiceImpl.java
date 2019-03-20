@@ -16,7 +16,7 @@ import static pl.bak.timserver.user.ApplicationUser.Roles.customer;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private ApplicationUserRepository applicationUserRepository;
+    private final ApplicationUserRepository applicationUserRepository;
     private final CoachService coachService;
     private final CustomerService customerService;
 

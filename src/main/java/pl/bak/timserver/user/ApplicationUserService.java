@@ -44,7 +44,7 @@ public class ApplicationUserService {
         } else throw new ConflictWithExistingException(ApplicationUser.class, applicationUser.getId());
     }
 
-    ApplicationUser findbyName(String name) {
+    ApplicationUser findByName(String name) {
         return applicationUserRepository.findByName(name);
     }
 
