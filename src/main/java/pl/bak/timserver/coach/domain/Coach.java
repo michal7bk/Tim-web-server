@@ -33,8 +33,6 @@ public class Coach {
     @Email
     public String email;
 
-    public String password;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "coach")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

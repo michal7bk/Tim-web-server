@@ -32,14 +32,12 @@ public class ApplicationUserService {
                 coachService.save(Coach.builder()
                         .email(applicationUser.getEmail())
                         .name(applicationUser.getName())
-                        .password(applicationUser.getPassword())
                         .surname(applicationUser.getSurname())
                         .build());
             } else if (applicationUser.getRoles().equals(ApplicationUser.Roles.customer)) {
                 customerService.save(Customer.builder()
                         .email(applicationUser.getEmail())
                         .name(applicationUser.getName())
-                        .password(applicationUser.getPassword())
                         .surname(applicationUser.getSurname())
                         .build());
             }

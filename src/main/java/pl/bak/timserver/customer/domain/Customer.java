@@ -30,8 +30,6 @@ public class Customer {
     @Email
     public String email;
 
-    public String password;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "customer")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

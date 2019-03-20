@@ -1,8 +1,6 @@
 package pl.bak.timserver.user;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +13,9 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApplicationUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
