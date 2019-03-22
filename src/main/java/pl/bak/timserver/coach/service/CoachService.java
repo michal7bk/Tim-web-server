@@ -6,7 +6,8 @@ import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.repository.CoachRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
-import pl.bak.timserver.exception.objectNotFoundExcpetion;
+import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
+import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
 import pl.bak.timserver.user.ApplicationUser;
 
@@ -28,35 +29,37 @@ public class CoachService {
     }
 
     public CoachInfoDto findCoach(Long id) {
-        Coach coach = coachRepository.findById(id).orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, id));
+        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
         return convertToDto(coach);
     }
 
     public Coach save(Coach coach) {
-        if (!coachRepository.findByEmail(coach.getEmail()).isPresent())
+        if (!coachRepository.findByEmail(coach.getEmail()).isPresent()) {
+            MailSender.sendMail("Your account was created", coach.getEmail());
             return coachRepository.save(coach);
+        }
         else throw new ConflictWithExistingException(Coach.class, coach.getId());
     }
 
     public void delete(Long id) {
-        Coach Coach = coachRepository.findById(id).orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, id));
+        Coach Coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
         coachRepository.delete(Coach);
     }
 
     public List<Training> findAcceptedTrainings(Long coachId) {
-        Coach coach = coachRepository.findById(coachId).orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, coachId));
+        Coach coach = coachRepository.findById(coachId).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coachId));
         return coach.getTrainings().stream().filter(Training::isAccepted).collect(Collectors.toList());
     }
 
     public List<Training> findProposedTrainings(Long id) {
-        Coach coach = coachRepository.findById(id).orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, id));
+        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
         return coach.getTrainings().stream().filter(training -> !training.isAccepted()).collect(Collectors.toList());
 
     }
 
     public Coach matchCoachByUser(ApplicationUser user) {
         return coachRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new objectNotFoundExcpetion(Coach.class, user.getId()));
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, user.getId()));
     }
 
     private CoachInfoDto convertToDto(Coach coach) {

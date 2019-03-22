@@ -1,7 +1,6 @@
 package pl.bak.timserver.customer.controller;
 
 import com.google.gson.JsonObject;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.customer.domain.Customer;
@@ -18,7 +17,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService, ModelMapper modelMapper) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
@@ -52,14 +51,21 @@ public class CustomerController {
     @GetMapping(value = "/{customerId}/planned-trainings")
     public String countPlannedTrainings(@PathVariable Long customerId) {
         JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.getCountPlannedTrainings(customerId)));
+        result.addProperty("count", String.valueOf(customerService.countPlannedTrainings(customerId)));
         return result.toString();
     }
 
     @GetMapping(value = "/{customerId}/completed-trainings")
     public String countCompletedTrainings(@PathVariable Long customerId) {
         JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.getCountCompletedTrainings(customerId)));
+        result.addProperty("count", String.valueOf(customerService.countCompletedTrainings(customerId)));
+        return result.toString();
+    }
+
+    @GetMapping(value = "{customerId}/unique-coaches")
+    public String countUniqueCoach(@PathVariable Long customerId) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(customerService.countUniqueCoach(customerId)));
         return result.toString();
     }
 

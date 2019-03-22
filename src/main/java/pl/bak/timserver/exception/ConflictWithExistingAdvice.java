@@ -12,5 +12,5 @@ public class ConflictWithExistingAdvice {
     @ResponseBody
     @ExceptionHandler(ConflictWithExistingException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    String trainingOverlapsHandler(ConflictWithExistingException ex ){return ex.getMessage();}
+    String conflictsHandler(ConflictWithExistingException ex ){return ex.getMessage();}
 }
