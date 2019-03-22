@@ -18,9 +18,8 @@ public class ApplicationUserController {
         applicationUserService.saveApplicationUser(applicationUser);
     }
 
-    @GetMapping("/{name}")
-    public ApplicationUser get(@PathVariable() String name) {
-
-        return applicationUserService.findByName(name);
+    @GetMapping("/{userId}")
+    public String matchUser(@PathVariable() Long userId) {
+        return applicationUserService.matchUser(userId);
     }
 }

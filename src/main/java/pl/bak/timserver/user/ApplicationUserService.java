@@ -1,5 +1,7 @@
 package pl.bak.timserver.user;
 
+import com.google.gson.Gson;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
@@ -7,6 +9,9 @@ import pl.bak.timserver.coach.service.CoachService;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.service.CustomerService;
 import pl.bak.timserver.exception.ConflictWithExistingException;
+
+import static pl.bak.timserver.user.ApplicationUser.Roles.coach;
+import static pl.bak.timserver.user.ApplicationUser.Roles.customer;
 
 @Service
 public class ApplicationUserService {
@@ -28,13 +33,13 @@ public class ApplicationUserService {
         if (applicationUserRepository.findByEmail(applicationUser.getEmail()) == null) {
             applicationUser.setPassword(bCryptPasswordEncoder.encode(applicationUser.getPassword()));
             applicationUserRepository.save(applicationUser);
-            if (applicationUser.getRoles().equals(ApplicationUser.Roles.coach)) {
+            if (applicationUser.getRoles().equals(coach)) {
                 coachService.save(Coach.builder()
                         .email(applicationUser.getEmail())
                         .name(applicationUser.getName())
                         .surname(applicationUser.getSurname())
                         .build());
-            } else if (applicationUser.getRoles().equals(ApplicationUser.Roles.customer)) {
+            } else if (applicationUser.getRoles().equals(customer)) {
                 customerService.save(Customer.builder()
                         .email(applicationUser.getEmail())
                         .name(applicationUser.getName())
@@ -44,8 +49,18 @@ public class ApplicationUserService {
         } else throw new ConflictWithExistingException(ApplicationUser.class, applicationUser.getId());
     }
 
-    ApplicationUser findByName(String name) {
-        return applicationUserRepository.findByName(name);
+
+    String matchUser(Long userId){
+        Gson gson = new Gson();
+        ApplicationUser user = applicationUserRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException(ApplicationUser.class, userId.toString()));
+        if(user.getRoles().equals(customer)){
+            return gson.toJson(customerService.matchCustomerByUser(user));
+        }else if (user.getRoles().equals(coach)){
+            return gson.toJson(coachService.matchCoachByUser(user));
+        }else{
+            throw new ObjectNotFoundException(ApplicationUser.class,userId.toString());
+        }
     }
 
 }

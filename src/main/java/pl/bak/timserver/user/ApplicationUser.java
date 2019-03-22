@@ -25,7 +25,6 @@ public class ApplicationUser implements Serializable {
 
     private String surname;
 
-    @NotNull
     private String password;
 
     @Email
