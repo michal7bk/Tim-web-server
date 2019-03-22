@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.service.CoachService;
-import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.TrainingDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,7 +20,7 @@ public class CoachController {
         this.coachService = coachService;
     }
 
-        @GetMapping()
+    @GetMapping()
     public List<Coach> findCoaches() {
         return coachService.findCoaches();
     }
@@ -43,12 +43,12 @@ public class CoachController {
     }
 
     @GetMapping(value = "/{coach_id}/accepted-trainings")
-    public List<Training> findAcceptedTrainings(@PathVariable Long coach_id){
+    public List<TrainingDto> findAcceptedTrainings(@PathVariable Long coach_id) {
         return coachService.findAcceptedTrainings(coach_id);
     }
 
     @GetMapping(value = "/{coach_id}/proposed-trainings")
-    public List<Training> findProposedTrainings(@PathVariable Long coach_id){
+    public List<TrainingDto> findProposedTrainings(@PathVariable Long coach_id) {
         return coachService.findProposedTrainings(coach_id);
     }
 
