@@ -33,8 +33,8 @@ public class CustomerService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Customer> findCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerInfoDto> findCustomers() {
+        return customerRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     public CustomerInfoDto findCustomer(Long id) {

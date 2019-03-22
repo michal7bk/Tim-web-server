@@ -22,7 +22,7 @@ public class CustomerController {
     }
 
     @GetMapping()
-    public List<Customer> findCustomers() {
+    public List<CustomerInfoDto> findCustomers() {
         return customerService.findCustomers();
     }
 
