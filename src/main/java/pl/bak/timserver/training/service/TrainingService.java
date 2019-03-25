@@ -1,5 +1,6 @@
 package pl.bak.timserver.training.service;
 
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.NewTrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.repository.TrainingRepository;
 
@@ -42,13 +44,19 @@ public class TrainingService {
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Training.class, id));
     }
 
-    public TrainingDto proposeTraining(TrainingDto trainingDto) {
-        Training training = convertToEntity(trainingDto);
-        training.setAccepted(false);
-        Coach coach = coachRepository.findById(training.getCoach().getId())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, training.getCoach().getId()));
-        Customer customer = customerRepository.findById(training.getCustomer().getId())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, training.getCustomer().getId()));
+    public TrainingDto proposeTraining(NewTrainingDto newTrainingDto) {
+        Coach coach = coachRepository.findById(newTrainingDto.getCoachId())
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, newTrainingDto.getCoachId()));
+        Customer customer = customerRepository.findById(newTrainingDto.getCustomerId())
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, newTrainingDto.getCustomerId()));
+        Training training = Training.builder()
+                .accepted(false)
+                .customer(customer)
+                .coach(coach)
+                .startTime(newTrainingDto.getStartTime())
+                .endTime(newTrainingDto.getEndTime())
+                .info(newTrainingDto.getInfo())
+                .build();
         if (!overlapsWithExisting(training)) {
             coach.getTrainings().add(training);
             MailSender.proposeTraining(training);
@@ -87,8 +95,9 @@ public class TrainingService {
         return modelMapper.map(training, TrainingDto.class);
     }
 
-    private Training convertToEntity(TrainingDto postDto) throws ParseException {
-        return modelMapper.map(postDto, Training.class);
+    private Training convertToEntity(NewTrainingDto newTrainingDto) throws ParseException {
+
+        return modelMapper.map(newTrainingDto, Training.class);
     }
 
 }

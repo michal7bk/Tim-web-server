@@ -7,10 +7,10 @@ import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.service.CustomerService;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
+import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 
 import javax.validation.Valid;
 import java.util.List;
-
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -44,7 +44,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{customerId}/trainings")
-    public List<TrainingDto> findCustomerTrainings(@PathVariable Long customerId) {
+    public List<TrainingsListDto> findCustomerTrainings(@PathVariable Long customerId) {
         return customerService.findCustomerTrainings(customerId);
     }
 

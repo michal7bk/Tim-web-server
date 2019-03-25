@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.NewTrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.service.TrainingService;
 
@@ -33,8 +34,8 @@ public class TrainingController {
 
     @PostMapping(value = "/propose")
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainingDto proposeTraining(@RequestBody @Valid TrainingDto trainingDto) {
-        return trainingService.proposeTraining(trainingDto);
+    public TrainingDto proposeTraining(@RequestBody @Valid NewTrainingDto newTrainingDto) {
+        return trainingService.proposeTraining(newTrainingDto);
     }
 
     @RequestMapping(value = "/{training_id}", method = RequestMethod.DELETE)

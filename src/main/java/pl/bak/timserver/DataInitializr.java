@@ -14,6 +14,8 @@ import pl.bak.timserver.training.repository.TrainingRepository;
 import pl.bak.timserver.user.ApplicationUser;
 import pl.bak.timserver.user.ApplicationUserRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +40,8 @@ public class DataInitializr implements ApplicationRunner {
     private Coach coach2;
     private Customer customer2;
 
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
     @Autowired
     public DataInitializr(BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, CoachRepository coachRepository, TrainingRepository trainingRepository, ApplicationUserRepository applicationUserRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -56,13 +60,13 @@ public class DataInitializr implements ApplicationRunner {
     }
 
     private void updateUsersWithTrainings() {
-        customerRepository.findByEmail("user1@user1.com").get().setTrainings(trainings1);
+        customerRepository.findByEmail("u@u.com").get().setTrainings(trainings1);
         customerRepository.findByEmail("user2@user2.com").get().setTrainings(trainings2);
         coachRepository.findByEmail("coach1@coach1.com").get().setTrainings(trainings1);
         coachRepository.findByEmail("coach2@coach2.com").get().setTrainings(trainings2);
     }
 
-    private void cleanTables(){
+    private void cleanTables() {
         trainingRepository.deleteAll();
         customerRepository.deleteAll();
         coachRepository.deleteAll();
@@ -71,9 +75,9 @@ public class DataInitializr implements ApplicationRunner {
 
     private void createUsers() {
         customer1 = Customer.builder()
-                .email("user1@user1.com")
-                .name("user1")
-                .surname("suruser1")
+                .email("u@u.com")
+                .name("u")
+                .surname("suru")
                 .build();
         customer2 = Customer.builder()
                 .email("user2@user2.com")
@@ -96,11 +100,11 @@ public class DataInitializr implements ApplicationRunner {
         coaches.addAll(Arrays.asList(coach1, coach2));
 
         ApplicationUser applicationUser11 = ApplicationUser.builder()
-                .email("user1@user1.com")
-                .name("user1")
-                .password(bCryptPasswordEncoder.encode("user1"))
+                .email("u@u.com")
+                .name("u")
+                .password(bCryptPasswordEncoder.encode("u"))
                 .roles(ApplicationUser.Roles.customer)
-                .surname("suruser1")
+                .surname("suru")
                 .build();
         ApplicationUser applicationUser12 = ApplicationUser.builder()
                 .email("user2@user2.com")
@@ -145,8 +149,8 @@ public class DataInitializr implements ApplicationRunner {
                 .coach(coach1)
                 .customer(customer1)
                 .info("this is new training1")
-                .startTime(now())
-                .endTime(now().plusHours(1))
+                .startTime(LocalDateTime.parse(now().format(formatter)))
+                .endTime(LocalDateTime.parse(now().format(formatter)).plusHours(1))
                 .build();
 
         Training training11 = Training.builder()
@@ -154,8 +158,8 @@ public class DataInitializr implements ApplicationRunner {
                 .coach(coach1)
                 .customer(customer1)
                 .info("this is new training11")
-                .startTime(now().minusHours(1))
-                .endTime(now().plusHours(1))
+                .startTime(LocalDateTime.parse(now().format(formatter)).minusHours(1))
+                .endTime(LocalDateTime.parse(now().format(formatter)).plusHours(1))
                 .build();
 
         Training training2 = Training.builder()
@@ -163,8 +167,8 @@ public class DataInitializr implements ApplicationRunner {
                 .coach(coach2)
                 .customer(customer2)
                 .info("this is new training2")
-                .startTime(now())
-                .endTime(now().plusHours(1))
+                .startTime(LocalDateTime.parse(now().format(formatter)))
+                .endTime(LocalDateTime.parse(now().format(formatter)).plusHours(1))
                 .build();
 
         Training training22 = Training.builder()
@@ -172,8 +176,8 @@ public class DataInitializr implements ApplicationRunner {
                 .coach(coach2)
                 .customer(customer2)
                 .info("this is new training22")
-                .startTime(now().minusHours(2))
-                .endTime(now().minusHours(1))
+                .startTime(LocalDateTime.parse(now().format(formatter)).minusHours(2))
+                .endTime(LocalDateTime.parse(now().format(formatter)).minusHours(1))
                 .build();
         trainings1.addAll(Arrays.asList(training1, training11));
         trainings1.addAll(Arrays.asList(training2, training22));

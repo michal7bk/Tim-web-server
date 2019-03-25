@@ -12,6 +12,7 @@ import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
+import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 import pl.bak.timserver.user.ApplicationUser;
 
 import java.time.LocalDateTime;
@@ -56,10 +57,10 @@ public class CustomerService {
         customerRepository.delete(customer);
     }
 
-    public List<TrainingDto> findCustomerTrainings(Long id) {
+    public List<TrainingsListDto> findCustomerTrainings(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
-        return customer.trainings.stream().map(this::convertToDto).collect(Collectors.toList());
+        return customer.trainings.stream().map(this::convertToListDto).collect(Collectors.toList());
     }
 
 
@@ -92,6 +93,10 @@ public class CustomerService {
 
     private TrainingDto convertToDto(Training training) {
         return modelMapper.map(training, TrainingDto.class);
+    }
+
+    private TrainingsListDto convertToListDto(Training training) {
+        return modelMapper.map(training, TrainingsListDto.class);
     }
 
     private Training convertToEntity(TrainingDto postDto) throws ParseException {
