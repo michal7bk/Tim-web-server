@@ -22,4 +22,14 @@ public class ApplicationUserController {
     public String matchUser(@PathVariable() Long userId) {
         return applicationUserService.matchUser(userId);
     }
+
+    @PutMapping("/{userId}/set-offline")
+    public void setOffline(@PathVariable() Long userId) {
+        applicationUserService.setOffline(userId);
+    }
+
+    @PutMapping("/{userId}/set-online")
+    public void setOnline(@PathVariable() Long userId) {
+        applicationUserService.setOnline(userId);
+    }
 }

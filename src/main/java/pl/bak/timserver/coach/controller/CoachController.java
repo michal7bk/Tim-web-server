@@ -43,12 +43,12 @@ public class CoachController {
         coachService.delete(coachId);
     }
 
-    @GetMapping(value = "/{coach_id}/accepted-trainings")
+    @GetMapping(value = "/{coach_id}/accepted-trainings-list")
     public List<TrainingDto> findAcceptedTrainings(@PathVariable Long coach_id) {
         return coachService.findAcceptedTrainings(coach_id);
     }
 
-    @GetMapping(value = "/{coach_id}/proposed-trainings")
+    @GetMapping(value = "/{coach_id}/proposed-trainings-list")
     public List<TrainingDto> findProposedTrainings(@PathVariable Long coach_id) {
         return coachService.findProposedTrainings(coach_id);
     }
