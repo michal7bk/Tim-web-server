@@ -13,6 +13,10 @@ import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.user.ApplicationUser;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,8 +42,7 @@ public class CoachService {
         if (!coachRepository.findByEmail(coach.getEmail()).isPresent()) {
             MailSender.sendMail("Your account was created", coach.getEmail());
             return coachRepository.save(coach);
-        }
-        else throw new ConflictWithExistingException(Coach.class, coach.getId());
+        } else throw new ConflictWithExistingException(Coach.class, coach.getId());
     }
 
     public void delete(Long id) {
@@ -58,6 +61,29 @@ public class CoachService {
 
     }
 
+    public long countAcceptedTrainings(Long coach_id) {
+        Coach coach = coachRepository.findById(coach_id)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+        return coach.getTrainings().stream().map(Training::isAccepted).count();
+    }
+
+    public long countProposedTrainings(Long coach_id) {
+        Coach coach = coachRepository.findById(coach_id)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+        return coach.getTrainings().stream().map(x-> !x.isAccepted()).count();
+    }
+
+    public long countUniqueCustomers(Long coach_id) {
+        Coach coach = coachRepository.findById(coach_id)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+        return coach.getTrainings().stream().filter(distinctByKey(Training::getCustomer)).count();
+    }
+
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
     public Coach matchCoachByUser(ApplicationUser user) {
         return coachRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, user.getId()));
@@ -67,7 +93,7 @@ public class CoachService {
         return modelMapper.map(coach, CoachInfoDto.class);
     }
 
-    private TrainingDto convertToDto(Training training){
+    private TrainingDto convertToDto(Training training) {
         return modelMapper.map(training, TrainingDto.class);
     }
 

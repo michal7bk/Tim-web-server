@@ -1,5 +1,6 @@
 package pl.bak.timserver.coach.controller;
 
+import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.coach.domain.Coach;
@@ -50,6 +51,27 @@ public class CoachController {
     @GetMapping(value = "/{coach_id}/proposed-trainings")
     public List<TrainingDto> findProposedTrainings(@PathVariable Long coach_id) {
         return coachService.findProposedTrainings(coach_id);
+    }
+
+    @GetMapping(value = "/{coach_id}/accepted-trainings")
+    public String countAcceptedTrainings(@PathVariable Long coach_id) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(coachService.countAcceptedTrainings(coach_id)));
+        return result.toString();
+    }
+
+    @GetMapping(value = "/{coach_id}/proposed-trainings")
+    public String countProposedTrainings(@PathVariable Long coach_id) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(coachService.countProposedTrainings(coach_id)));
+        return result.toString();
+    }
+
+    @GetMapping(value = "{coach_id}/unique-customers")
+    public String countUniqueCustomers(@PathVariable Long coach_id) {
+        JsonObject result = new JsonObject();
+        result.addProperty("count", String.valueOf(coachService.countUniqueCustomers(coach_id)));
+        return result.toString();
     }
 
 
