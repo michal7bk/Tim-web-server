@@ -62,7 +62,7 @@ public class DataInitializr implements ApplicationRunner {
     private void updateUsersWithTrainings() {
         customerRepository.findByEmail("u@u.com").get().setTrainings(trainings1);
         customerRepository.findByEmail("user2@user2.com").get().setTrainings(trainings2);
-        coachRepository.findByEmail("coach1@coach1.com").get().setTrainings(trainings1);
+        coachRepository.findByEmail("c@c.com").get().setTrainings(trainings1);
         coachRepository.findByEmail("coach2@coach2.com").get().setTrainings(trainings2);
     }
 
@@ -87,8 +87,8 @@ public class DataInitializr implements ApplicationRunner {
         customers.addAll(Arrays.asList(customer1, customer2));
 
         coach1 = Coach.builder()
-                .email("coach1@coach1.com")
-                .name("coach1")
+                .email("c@c.com")
+                .name("c")
                 .surname("surcoach1")
                 .build();
 
@@ -114,9 +114,9 @@ public class DataInitializr implements ApplicationRunner {
                 .surname("suruser2")
                 .build();
         ApplicationUser applicationUser21 = ApplicationUser.builder()
-                .email("coach1@coach1.com")
-                .name("coach1")
-                .password(bCryptPasswordEncoder.encode("coach1"))
+                .email("c@c.com")
+                .name("c")
+                .password(bCryptPasswordEncoder.encode("c"))
                 .roles(ApplicationUser.Roles.coach)
                 .surname("surcoach1")
                 .build();

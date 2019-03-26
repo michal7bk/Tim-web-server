@@ -48,6 +48,22 @@ public class MailSender {
         }
     }
 
+    public static void cancelTraining(Training training) {
+        try {
+            MimeMessage message = new MimeMessage(setUpSession());
+            message.setFrom(new InternetAddress(mailUser));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(training.getCustomer().getEmail()));
+            message.setSubject("Your training was canceled");
+            message.setText("Hi, \n We are sorry to inform you, that your training with "
+                    + training.getCoach().getName() + " " + training.getCoach().getSurname()
+                    + "was canceled. \n You can contact with your coach by  : " + training.getCoach().getEmail());
+            Transport.send(message);
+            logger.info("Email was send to : " + training.getCustomer().getEmail());
+        } catch (MessagingException e) {
+            logger.info("Cannot send email to : " + training.getCustomer().getEmail());
+        }
+    }
+
     public static void proposeTraining(Training training){
         try {
             MimeMessage message = new MimeMessage(setUpSession());

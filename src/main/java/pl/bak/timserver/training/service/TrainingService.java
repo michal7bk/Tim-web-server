@@ -1,6 +1,5 @@
 package pl.bak.timserver.training.service;
 
-import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import pl.bak.timserver.training.domain.dto.NewTrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.repository.TrainingRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,12 +70,27 @@ public class TrainingService {
         trainingRepository.deleteById(id);
     }
 
-    public TrainingDto acceptTraining(Long trainingId) {
-        Training trainingToUpdate = trainingRepository.findById(trainingId)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Training.class, trainingId));
-        trainingToUpdate.setAccepted(true);
-        MailSender.acceptTraining(trainingToUpdate);
-        return convertToDto(trainingToUpdate);
+    public void acceptTraining(Long trainingId) {
+        try {
+            Training trainingToUpdate = trainingRepository.getOne(trainingId);
+            trainingToUpdate.setAccepted(true);
+            trainingRepository.save(trainingToUpdate);
+            MailSender.acceptTraining(trainingToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new ObjectNotFoundExcpetion(Training.class, trainingId);
+        }
+
+    }
+
+    public void cancelTraining(Long trainingId) {
+        try {
+            Training trainingToUpdate = trainingRepository.getOne(trainingId);
+            trainingToUpdate.setAccepted(false);
+            trainingRepository.save(trainingToUpdate);
+            MailSender.cancelTraining(trainingToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new ObjectNotFoundExcpetion(Training.class, trainingId);
+        }
     }
 
     private boolean overlapsWithExisting(Training training) {

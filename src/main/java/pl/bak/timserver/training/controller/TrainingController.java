@@ -1,6 +1,5 @@
 package pl.bak.timserver.training.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.training.domain.Training;
@@ -16,7 +15,7 @@ public class TrainingController {
 
     private final TrainingService trainingService;
 
-    public TrainingController(TrainingService trainingService, ModelMapper modelMapper) {
+    public TrainingController(TrainingService trainingService) {
         this.trainingService = trainingService;
     }
 
@@ -45,9 +44,15 @@ public class TrainingController {
     }
 
     @PutMapping(value = "/{training_id}/accept")
-    public TrainingDto acceptTraining(@PathVariable Long training_id) {
-        return trainingService.acceptTraining(training_id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void acceptTraining(@PathVariable Long training_id) {
+         trainingService.acceptTraining(training_id);
     }
 
+    @PutMapping(value = "/{training_id}/cancel")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelTraining(@PathVariable Long training_id) {
+        trainingService.cancelTraining(training_id);
+    }
 
 }
