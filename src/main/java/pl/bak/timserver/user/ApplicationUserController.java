@@ -23,13 +23,13 @@ public class ApplicationUserController {
         return applicationUserService.matchUser(userId);
     }
 
-    @PutMapping("/{userId}/set-offline")
-    public void setOffline(@PathVariable() Long userId) {
-        applicationUserService.setOffline(userId);
+    @PutMapping("/set-offline")
+    public void setOffline(@RequestBody() ApplicationUser applicationUser) {
+        applicationUserService.setOffline(applicationUser);
     }
 
-    @PutMapping("/{userId}/set-online")
-    public void setOnline(@PathVariable() Long userId) {
-        applicationUserService.setOnline(userId);
+    @PutMapping("/set-online")
+    public void setOnline(@RequestBody() ApplicationUser applicationUser) {
+        applicationUserService.setOnline(applicationUser);
     }
 }

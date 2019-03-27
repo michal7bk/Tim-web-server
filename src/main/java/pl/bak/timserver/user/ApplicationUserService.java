@@ -66,23 +66,31 @@ public class ApplicationUserService {
         }
     }
 
-    void setOffline(Long userId) {
-        try {
-            ApplicationUser appUser = applicationUserRepository.getOne(userId);
-            appUser.setActive(false);
-            applicationUserRepository.save(appUser);
-        } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(ApplicationUser.class, userId);
-        }
+    void setOffline(ApplicationUser user) {
+        ApplicationUser applicationUser = matchCustomerCoachByAppUser(user);
+        applicationUser.setActive(false);
+        applicationUserRepository.save(applicationUser);
     }
 
-    void setOnline(Long userId) {
+    void setOnline(ApplicationUser user) {
+        ApplicationUser applicationUser = matchCustomerCoachByAppUser(user);
+        applicationUser.setActive(true);
+        applicationUserRepository.save(applicationUser);
+    }
+
+    private ApplicationUser matchCustomerCoachByAppUser(ApplicationUser user) {
+        String emailCustCoachToUpdate = null;
+        Long appUserId = null;
         try {
-            ApplicationUser appUser = applicationUserRepository.getOne(userId);
-            appUser.setActive(true);
-            applicationUserRepository.save(appUser);
+            if (user.getRoles().equals(coach)) {
+                emailCustCoachToUpdate = coachService.findCoach(user.getId()).getEmail();
+            } else if (user.getRoles().equals(customer)) {
+                emailCustCoachToUpdate = customerService.findCustomer(user.getId()).getEmail();
+            }
+            appUserId = applicationUserRepository.findByEmail(emailCustCoachToUpdate).getId();
+            return applicationUserRepository.getOne(appUserId);
         } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(ApplicationUser.class, userId);
+            throw new ObjectNotFoundExcpetion(ApplicationUser.class, appUserId);
         }
     }
 }
