@@ -7,10 +7,9 @@ import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.domain.dto.CoachTrainingsDto;
 import pl.bak.timserver.coach.repository.CoachRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
-import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
+import pl.bak.timserver.exception.ObjectNotFoundException;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
-import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 import pl.bak.timserver.user.ApplicationUser;
 
@@ -36,7 +35,7 @@ public class CoachService {
     }
 
     public CoachInfoDto findCoach(Long id) {
-        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
+        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(Coach.class, id));
         return convertToDto(coach);
     }
 
@@ -48,36 +47,36 @@ public class CoachService {
     }
 
     public void delete(Long id) {
-        Coach Coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
+        Coach Coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(Coach.class, id));
         coachRepository.delete(Coach);
     }
 
     public List<TrainingsListDto> findAcceptedTrainings(Long coachId) {
-        Coach coach = coachRepository.findById(coachId).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coachId));
+        Coach coach = coachRepository.findById(coachId).orElseThrow(() -> new ObjectNotFoundException(Coach.class, coachId));
         return coach.getTrainings().stream().filter(Training::isAccepted).map(this::convertToListDto).collect(Collectors.toList());
     }
 
     public List<TrainingsListDto> findProposedTrainings(Long id) {
-        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
+        Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(Coach.class, id));
         return coach.getTrainings().stream().filter(training -> !training.isAccepted()).map(this::convertToListDto).collect(Collectors.toList());
 
     }
 
     public long countAcceptedTrainings(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
         return coach.getTrainings().stream().map(Training::isAccepted).count();
     }
 
     public long countProposedTrainings(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
         return coach.getTrainings().stream().map(x -> !x.isAccepted()).count();
     }
 
     public long countUniqueCustomers(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
         return coach.getTrainings().stream().filter(distinctByKey(Training::getCustomer)).count();
     }
 
@@ -88,7 +87,7 @@ public class CoachService {
 
     public Coach matchCoachByUser(ApplicationUser user) {
         return coachRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, user.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, user.getId()));
     }
 
     private CoachInfoDto convertToDto(Coach coach) {
@@ -97,10 +96,6 @@ public class CoachService {
 
     private CoachTrainingsDto convertToCoachTrainingsDto(Coach coach) {
         return modelMapper.map(coach, CoachTrainingsDto.class);
-    }
-
-    private TrainingDto convertToDto(Training training) {
-        return modelMapper.map(training, TrainingDto.class);
     }
 
     private TrainingsListDto convertToListDto(Training training) {

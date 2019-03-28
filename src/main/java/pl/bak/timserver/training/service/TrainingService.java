@@ -1,14 +1,13 @@
 package pl.bak.timserver.training.service;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.repository.CoachRepository;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.repository.CustomerRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
-import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
+import pl.bak.timserver.exception.ObjectNotFoundException;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
 import pl.bak.timserver.training.domain.dto.NewDateTrainingDto;
@@ -42,14 +41,14 @@ public class TrainingService {
 
     public Training findTraining(Long id) {
         return trainingRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Training.class, id));
+                .orElseThrow(() -> new ObjectNotFoundException(Training.class, id));
     }
 
     public TrainingDto proposeTraining(NewTrainingDto newTrainingDto) {
         Coach coach = coachRepository.findById(newTrainingDto.getCoachId())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, newTrainingDto.getCoachId()));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, newTrainingDto.getCoachId()));
         Customer customer = customerRepository.findById(newTrainingDto.getCustomerId())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, newTrainingDto.getCustomerId()));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, newTrainingDto.getCustomerId()));
         Training training = Training.builder()
                 .accepted(false)
                 .customer(customer)
@@ -75,7 +74,7 @@ public class TrainingService {
             trainingRepository.save(training);
             return convertToDto(training);
         } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(Training.class, trainingDto.getId());
+            throw new ObjectNotFoundException(Training.class, trainingDto.getId());
         }
     }
 
@@ -90,7 +89,7 @@ public class TrainingService {
             trainingRepository.save(trainingToUpdate);
             MailSender.acceptTraining(trainingToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(Training.class, trainingId);
+            throw new ObjectNotFoundException(Training.class, trainingId);
         }
 
     }
@@ -102,7 +101,7 @@ public class TrainingService {
             trainingRepository.save(trainingToUpdate);
             MailSender.cancelTraining(trainingToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(Training.class, trainingId);
+            throw new ObjectNotFoundException(Training.class, trainingId);
         }
     }
 
@@ -118,14 +117,8 @@ public class TrainingService {
         return false;
     }
 
-
     private TrainingDto convertToDto(Training training) {
         return modelMapper.map(training, TrainingDto.class);
     }
-
-    private Training convertToEntity(NewTrainingDto newTrainingDto) throws ParseException {
-        return modelMapper.map(newTrainingDto, Training.class);
-    }
-
 
 }

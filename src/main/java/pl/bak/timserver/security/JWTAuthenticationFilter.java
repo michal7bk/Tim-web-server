@@ -23,7 +23,6 @@ import java.util.Date;
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static pl.bak.timserver.security.SecurityConstants.*;
 
-//sprawdzenie kto to jest ?
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 
@@ -40,13 +39,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest req,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
-            ApplicationUser creds = new ObjectMapper()
+            ApplicationUser credentials = new ObjectMapper()
                     .readValue(req.getInputStream(), ApplicationUser.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            creds.getName(),
-                            creds.getPassword(),
+                            credentials.getName(),
+                            credentials.getPassword(),
                             new ArrayList<>())
             );
         } catch (IOException e) {

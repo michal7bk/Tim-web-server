@@ -1,7 +1,6 @@
 package pl.bak.timserver.user;
 
 import com.google.gson.Gson;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
@@ -9,7 +8,7 @@ import pl.bak.timserver.coach.service.CoachService;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.service.CustomerService;
 import pl.bak.timserver.exception.ConflictWithExistingException;
-import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
+import pl.bak.timserver.exception.ObjectNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -56,13 +55,13 @@ public class ApplicationUserService {
     String matchUser(Long userId) {
         Gson gson = new Gson();
         ApplicationUser user = applicationUserRepository.findById(userId)
-                .orElseThrow(() -> new ObjectNotFoundException(ApplicationUser.class, userId.toString()));
+                .orElseThrow(() -> new org.hibernate.ObjectNotFoundException(ApplicationUser.class, userId.toString()));
         if (user.getRoles().equals(customer)) {
             return gson.toJson(customerService.matchCustomerByUser(user));
         } else if (user.getRoles().equals(coach)) {
             return gson.toJson(coachService.matchCoachByUser(user));
         } else {
-            throw new ObjectNotFoundException(ApplicationUser.class, userId.toString());
+            throw new org.hibernate.ObjectNotFoundException(ApplicationUser.class, userId.toString());
         }
     }
 
@@ -90,7 +89,7 @@ public class ApplicationUserService {
             appUserId = applicationUserRepository.findByEmail(emailCustCoachToUpdate).getId();
             return applicationUserRepository.getOne(appUserId);
         } catch (EntityNotFoundException e) {
-            throw new ObjectNotFoundExcpetion(ApplicationUser.class, appUserId);
+            throw new ObjectNotFoundException(ApplicationUser.class, appUserId);
         }
     }
 }

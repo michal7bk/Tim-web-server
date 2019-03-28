@@ -14,7 +14,7 @@ import java.util.Properties;
 @Slf4j
 public class MailSender {
 
-    private static Logger logger = LoggerFactory.getLogger(MailSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
     private static final String mailUser = "tim.best.personal.trainer@gmail.com";
     private static final String mailPassword = "timtimtim";
 

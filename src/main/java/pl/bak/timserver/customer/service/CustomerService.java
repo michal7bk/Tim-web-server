@@ -7,7 +7,7 @@ import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.repository.CustomerRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
-import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
+import pl.bak.timserver.exception.ObjectNotFoundException;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
 import pl.bak.timserver.training.domain.dto.TrainingsListDto;
@@ -37,7 +37,7 @@ public class CustomerService {
     }
 
     public CustomerInfoDto findCustomer(Long id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(Customer.class, id));
         return convertToDto(customer);
     }
 
@@ -51,38 +51,38 @@ public class CustomerService {
 
     public void delete(Long id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, id));
         customerRepository.delete(customer);
     }
 
     public List<TrainingsListDto> findCustomerTrainings(Long id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, id));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, id));
         return customer.trainings.stream().map(this::convertToListDto).collect(Collectors.toList());
     }
 
 
     public long countCompletedTrainings(Long customer_id) {
         Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customer_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
         return customer.getTrainings().stream().map(x -> x.getStartTime().isBefore(LocalDateTime.now())).count();
     }
 
     public long countPlannedTrainings(Long customer_id) {
         Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customer_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
         return customer.getTrainings().stream().map(x -> x.getStartTime().isAfter(LocalDateTime.now())).count();
     }
 
     public long countUniqueCoach(Long customer_id) {
         Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customer_id));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
         return customer.getTrainings().stream().filter(distinctByKey(Training::getCoach)).count();
     }
 
     public void askCoachForContact(Long customerId, String coachEmail) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customerId));
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customerId));
         MailSender.askForContact(customer, coachEmail);
     }
 
@@ -101,7 +101,7 @@ public class CustomerService {
 
     public Customer matchCustomerByUser(ApplicationUser user) {
         return customerRepository.findByEmail(user.getEmail())
-                .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, user.getId()));
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, user.getId()));
     }
 
 

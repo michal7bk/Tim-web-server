@@ -40,7 +40,7 @@ public class DataInitializr implements ApplicationRunner {
     private Coach coach2;
     private Customer customer2;
 
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Autowired
     public DataInitializr(BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, CoachRepository coachRepository, TrainingRepository trainingRepository, ApplicationUserRepository applicationUserRepository) {
