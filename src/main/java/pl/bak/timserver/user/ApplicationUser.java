@@ -31,7 +31,7 @@ public class ApplicationUser implements Serializable {
     private String email;
 
     @Builder.Default()
-    private boolean active = true;
+    private boolean active = false;
 
     @Builder.Default()
     private Roles roles = Roles.customer;

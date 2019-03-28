@@ -7,7 +7,7 @@ import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.domain.dto.CoachTrainingsDto;
 import pl.bak.timserver.coach.service.CoachService;
-import pl.bak.timserver.training.domain.dto.TrainingDto;
+import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -45,12 +45,12 @@ public class CoachController {
     }
 
     @GetMapping(value = "/{coach_id}/accepted-trainings-list")
-    public List<TrainingDto> findAcceptedTrainings(@PathVariable Long coach_id) {
+    public List<TrainingsListDto> findAcceptedTrainings(@PathVariable Long coach_id) {
         return coachService.findAcceptedTrainings(coach_id);
     }
 
     @GetMapping(value = "/{coach_id}/proposed-trainings-list")
-    public List<TrainingDto> findProposedTrainings(@PathVariable Long coach_id) {
+    public List<TrainingsListDto> findProposedTrainings(@PathVariable Long coach_id) {
         return coachService.findProposedTrainings(coach_id);
     }
 

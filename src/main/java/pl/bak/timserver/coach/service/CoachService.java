@@ -11,6 +11,7 @@ import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
+import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 import pl.bak.timserver.user.ApplicationUser;
 
 import java.util.List;
@@ -51,14 +52,14 @@ public class CoachService {
         coachRepository.delete(Coach);
     }
 
-    public List<TrainingDto> findAcceptedTrainings(Long coachId) {
+    public List<TrainingsListDto> findAcceptedTrainings(Long coachId) {
         Coach coach = coachRepository.findById(coachId).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coachId));
-        return coach.getTrainings().stream().filter(Training::isAccepted).map(this::convertToDto).collect(Collectors.toList());
+        return coach.getTrainings().stream().filter(Training::isAccepted).map(this::convertToListDto).collect(Collectors.toList());
     }
 
-    public List<TrainingDto> findProposedTrainings(Long id) {
+    public List<TrainingsListDto> findProposedTrainings(Long id) {
         Coach coach = coachRepository.findById(id).orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, id));
-        return coach.getTrainings().stream().filter(training -> !training.isAccepted()).map(this::convertToDto).collect(Collectors.toList());
+        return coach.getTrainings().stream().filter(training -> !training.isAccepted()).map(this::convertToListDto).collect(Collectors.toList());
 
     }
 
@@ -100,6 +101,10 @@ public class CoachService {
 
     private TrainingDto convertToDto(Training training) {
         return modelMapper.map(training, TrainingDto.class);
+    }
+
+    private TrainingsListDto convertToListDto(Training training) {
+        return modelMapper.map(training, TrainingsListDto.class);
     }
 
 
