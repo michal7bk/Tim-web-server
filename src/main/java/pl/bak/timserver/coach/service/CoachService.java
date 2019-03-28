@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
+import pl.bak.timserver.coach.domain.dto.CoachTrainingsDto;
 import pl.bak.timserver.coach.repository.CoachRepository;
 import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
@@ -29,8 +30,8 @@ public class CoachService {
         this.modelMapper = modelMapper;
     }
 
-    public List<Coach> findCoaches() {
-        return coachRepository.findAll();
+    public List<CoachTrainingsDto> findCoaches() {
+        return coachRepository.findAll().stream().map(this::convertToCoachTrainingsDto).collect(Collectors.toList());
     }
 
     public CoachInfoDto findCoach(Long id) {
@@ -70,7 +71,7 @@ public class CoachService {
     public long countProposedTrainings(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
                 .orElseThrow(() -> new ObjectNotFoundExcpetion(Coach.class, coach_id));
-        return coach.getTrainings().stream().map(x-> !x.isAccepted()).count();
+        return coach.getTrainings().stream().map(x -> !x.isAccepted()).count();
     }
 
     public long countUniqueCustomers(Long coach_id) {
@@ -91,6 +92,10 @@ public class CoachService {
 
     private CoachInfoDto convertToDto(Coach coach) {
         return modelMapper.map(coach, CoachInfoDto.class);
+    }
+
+    private CoachTrainingsDto convertToCoachTrainingsDto(Coach coach) {
+        return modelMapper.map(coach, CoachTrainingsDto.class);
     }
 
     private TrainingDto convertToDto(Training training) {

@@ -3,6 +3,7 @@ package pl.bak.timserver.mail;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.training.domain.Training;
 
 import javax.mail.*;
@@ -64,7 +65,7 @@ public class MailSender {
         }
     }
 
-    public static void proposeTraining(Training training){
+    public static void proposeTraining(Training training) {
         try {
             MimeMessage message = new MimeMessage(setUpSession());
             message.setFrom(new InternetAddress(mailUser));
@@ -73,7 +74,7 @@ public class MailSender {
             message.setText("Hi, \n We are pleased to inform you, that :"
                     + training.getCustomer().getName() + " " + training.getCustomer().getSurname()
                     + "proposed you training. \n Customer selected date : " + training.getStartTime()
-            +"\n Please let know if this date is ok.");
+                    + "\n Please let know if this date is ok.");
             Transport.send(message);
             logger.info("Email was send to : " + training.getCustomer().getEmail());
         } catch (MessagingException e) {
@@ -81,6 +82,20 @@ public class MailSender {
         }
     }
 
+    public static void askForContact(Customer customer, String coachEmail) {
+        try {
+            MimeMessage message = new MimeMessage(setUpSession());
+            message.setFrom(new InternetAddress(mailUser));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(coachEmail));
+            message.setSubject("Customer asks for contact");
+            message.setText("Cutomer " + customer.getName() + " " + customer.getSurname() + ", \n " +
+                    "asks for contact, please write to him : " + customer.getEmail());
+            Transport.send(message);
+            logger.info("Email was send to : " + coachEmail);
+        } catch (MessagingException e) {
+            logger.info("Cannot send email to : " + coachEmail);
+        }
+    }
 
 
     private static Session setUpSession() {

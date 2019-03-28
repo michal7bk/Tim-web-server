@@ -1,7 +1,6 @@
 package pl.bak.timserver.customer.service;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Service;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.customer.domain.Customer;
@@ -11,7 +10,6 @@ import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
-import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 import pl.bak.timserver.user.ApplicationUser;
 
@@ -82,6 +80,12 @@ public class CustomerService {
         return customer.getTrainings().stream().filter(distinctByKey(Training::getCoach)).count();
     }
 
+    public void askCoachForContact(Long customerId, String coachEmail) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ObjectNotFoundExcpetion(Customer.class, customerId));
+        MailSender.askForContact(customer, coachEmail);
+    }
+
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
@@ -91,18 +95,9 @@ public class CustomerService {
         return modelMapper.map(customer, CustomerInfoDto.class);
     }
 
-    private TrainingDto convertToDto(Training training) {
-        return modelMapper.map(training, TrainingDto.class);
-    }
-
     private TrainingsListDto convertToListDto(Training training) {
         return modelMapper.map(training, TrainingsListDto.class);
     }
-
-    private Training convertToEntity(TrainingDto postDto) throws ParseException {
-        return modelMapper.map(postDto, Training.class);
-    }
-
 
     public Customer matchCustomerByUser(ApplicationUser user) {
         return customerRepository.findByEmail(user.getEmail())

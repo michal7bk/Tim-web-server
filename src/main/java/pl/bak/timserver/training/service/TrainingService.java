@@ -11,6 +11,7 @@ import pl.bak.timserver.exception.ConflictWithExistingException;
 import pl.bak.timserver.exception.ObjectNotFoundExcpetion;
 import pl.bak.timserver.mail.MailSender;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.NewDateTrainingDto;
 import pl.bak.timserver.training.domain.dto.NewTrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.repository.TrainingRepository;
@@ -66,6 +67,18 @@ public class TrainingService {
             throw new ConflictWithExistingException(Training.class, training.id);
     }
 
+    public TrainingDto proposeNewDate(NewDateTrainingDto trainingDto) {
+        try {
+            Training training = trainingRepository.getOne(trainingDto.getId());
+            training.setStartTime(trainingDto.getStartTime());
+            training.setEndTime(trainingDto.getEndTime());
+            trainingRepository.save(training);
+            return convertToDto(training);
+        } catch (EntityNotFoundException e) {
+            throw new ObjectNotFoundExcpetion(Training.class, trainingDto.getId());
+        }
+    }
+
     public void delete(Long id) {
         trainingRepository.deleteById(id);
     }
@@ -111,8 +124,8 @@ public class TrainingService {
     }
 
     private Training convertToEntity(NewTrainingDto newTrainingDto) throws ParseException {
-
         return modelMapper.map(newTrainingDto, Training.class);
     }
+
 
 }

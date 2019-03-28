@@ -3,6 +3,7 @@ package pl.bak.timserver.training.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.training.domain.Training;
+import pl.bak.timserver.training.domain.dto.NewDateTrainingDto;
 import pl.bak.timserver.training.domain.dto.NewTrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.service.TrainingService;
@@ -37,6 +38,12 @@ public class TrainingController {
         return trainingService.proposeTraining(newTrainingDto);
     }
 
+    @PutMapping(value = "/{training_id}/propose")
+    public TrainingDto proposeNewDate(@RequestBody @Valid NewDateTrainingDto newDateTrainingDto, @PathVariable Long training_id) {
+        newDateTrainingDto.setId(training_id);
+        return trainingService.proposeNewDate(newDateTrainingDto);
+    }
+
     @RequestMapping(value = "/{training_id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("training_id") Long training_id) {
@@ -46,7 +53,7 @@ public class TrainingController {
     @PutMapping(value = "/{training_id}/accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void acceptTraining(@PathVariable Long training_id) {
-         trainingService.acceptTraining(training_id);
+        trainingService.acceptTraining(training_id);
     }
 
     @PutMapping(value = "/{training_id}/cancel")

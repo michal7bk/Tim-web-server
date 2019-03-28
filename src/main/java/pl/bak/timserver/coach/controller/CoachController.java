@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
+import pl.bak.timserver.coach.domain.dto.CoachTrainingsDto;
 import pl.bak.timserver.coach.service.CoachService;
 import pl.bak.timserver.training.domain.dto.TrainingDto;
 
@@ -22,7 +23,7 @@ public class CoachController {
     }
 
     @GetMapping()
-    public List<Coach> findCoaches() {
+    public List<CoachTrainingsDto> findCoaches() {
         return coachService.findCoaches();
     }
 

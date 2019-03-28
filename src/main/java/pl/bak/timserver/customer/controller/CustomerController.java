@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.service.CustomerService;
-import pl.bak.timserver.training.domain.dto.TrainingDto;
 import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 
 import javax.validation.Valid;
 import java.util.List;
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -67,6 +67,11 @@ public class CustomerController {
         JsonObject result = new JsonObject();
         result.addProperty("count", String.valueOf(customerService.countUniqueCoach(customerId)));
         return result.toString();
+    }
+
+    @GetMapping(value = "{customerId}/ask-for-contact")
+    public void askForContact(@PathVariable Long customerId, @RequestParam String email) {
+        customerService.askCoachForContact(customerId, email);
     }
 
 }
