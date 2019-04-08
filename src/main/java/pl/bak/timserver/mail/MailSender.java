@@ -3,20 +3,22 @@ package pl.bak.timserver.mail;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ResourceUtils;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.training.domain.Training;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 @Slf4j
 public class MailSender {
 
     private static final Logger logger = LoggerFactory.getLogger(MailSender.class);
-    private static final String mailUser = "tim.best.personal.trainer@gmail.com";
-    private static final String mailPassword = "timtimtim";
+    private static String mailUser = "";
+    private static String mailPassword = "";
 
 
     public static void sendMail(String messageBody, String to) {
@@ -29,7 +31,7 @@ public class MailSender {
             Transport.send(message);
             logger.info("Email was send to : " + to);
         } catch (MessagingException e) {
-            logger.info("Cannot send email to : " + to);
+            logger.info("Cannot send email to : " + to + "exception" + e);
         }
     }
 
@@ -39,9 +41,10 @@ public class MailSender {
             message.setFrom(new InternetAddress(mailUser));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(training.getCustomer().getEmail()));
             message.setSubject("Your training was accepted");
-            message.setText("Hi, \n We are pleased to inform you, that your training with "
-                    + training.getCoach().getName() + " " + training.getCoach().getSurname()
-                    + "was accepted. \n Remember your training start : " + training.getStartTime());
+            Map<String, String> variables = new HashMap<>();
+            variables.put("@trainer", String.valueOf(training.getCoach()));
+            variables.put("@start_time", String.valueOf(training.getStartTime()));
+            message.setText(createEmailContent("acceptTraining.txt", variables));
             Transport.send(message);
             logger.info("Email was send to : " + training.getCustomer().getEmail());
         } catch (MessagingException e) {
@@ -53,11 +56,12 @@ public class MailSender {
         try {
             MimeMessage message = new MimeMessage(setUpSession());
             message.setFrom(new InternetAddress(mailUser));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(training.getCustomer().getEmail()));
             message.setSubject("Your training was canceled");
-            message.setText("Hi, \n We are sorry to inform you, that your training with "
-                    + training.getCoach().getName() + " " + training.getCoach().getSurname()
-                    + "was canceled. \n You can contact with your coach by  : " + training.getCoach().getEmail());
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(training.getCustomer().getEmail()));
+            Map<String, String> variables = new HashMap<>();
+            variables.put("@coach", String.valueOf(training.getCoach()));
+            variables.put("@coach_email", training.getCoach().getEmail());
+            message.setText(createEmailContent("cancelTraining.txt", variables));
             Transport.send(message);
             logger.info("Email was send to : " + training.getCustomer().getEmail());
         } catch (MessagingException e) {
@@ -70,11 +74,12 @@ public class MailSender {
             MimeMessage message = new MimeMessage(setUpSession());
             message.setFrom(new InternetAddress(mailUser));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(training.getCoach().getEmail()));
-            message.setSubject("Someone propose u training");
-            message.setText("Hi, \n We are pleased to inform you, that :"
-                    + training.getCustomer().getName() + " " + training.getCustomer().getSurname()
-                    + "proposed you training. \n Customer selected date : " + training.getStartTime()
-                    + "\n Please let know if this date is ok.");
+            message.setSubject("Someone propose u training")
+            ;
+            Map<String, String> variables = new HashMap<>();
+            variables.put("@customer", training.getCustomer().getName() + " " + training.getCustomer().getSurname());
+            variables.put("@date", String.valueOf(training.getStartTime()));
+            message.setText(createEmailContent("proposeTraining.txt", variables));
             Transport.send(message);
             logger.info("Email was send to : " + training.getCustomer().getEmail());
         } catch (MessagingException e) {
@@ -88,17 +93,21 @@ public class MailSender {
             message.setFrom(new InternetAddress(mailUser));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(coachEmail));
             message.setSubject("Customer asks for contact");
-            message.setText("Cutomer " + customer.getName() + " " + customer.getSurname() + ", \n " +
-                    "asks for contact, please write to him : " + customer.getEmail());
+            Map<String, String> variables = new HashMap<>();
+            variables.put("@customer", customer.getName() + " " + customer.getSurname());
+            variables.put("@customer_mail", customer.getEmail());
+            String body = createEmailContent("askForContact.txt", variables);
+            message.setText(body);
             Transport.send(message);
             logger.info("Email was send to : " + coachEmail);
         } catch (MessagingException e) {
-            logger.info("Cannot send email to : " + coachEmail);
+            logger.info("Cannot send email to : " + coachEmail + "exception " + e);
         }
     }
 
 
     private static Session setUpSession() {
+        setCredentials();
         Properties properties = System.getProperties();
         properties.setProperty("mail.smtp.host", "smtp.gmail.com");
         properties.setProperty("mail.smtp.starttls.enable", "true");
@@ -110,4 +119,45 @@ public class MailSender {
             }
         });
     }
+
+    private static void setCredentials() {
+        try (Scanner scanner = new Scanner(ResourceUtils.getFile("classpath:gmailCredentials.txt"))) {
+            String user = scanner.nextLine();
+            mailUser = user.substring(user.lastIndexOf("=") + 1);
+            String password = scanner.nextLine();
+            mailPassword = password.substring(password.lastIndexOf("=") + 1);
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        }
+    }
+
+    private static String createEmailContent(String filePath, Map<String, String> new_vallue) {
+        StringBuilder oldContent = new StringBuilder();
+        BufferedReader reader = null;
+        String newContent = "";
+        try {
+            File fileToBeModified = ResourceUtils.getFile("classpath:mails/" + filePath);
+            reader = new BufferedReader(new FileReader(fileToBeModified));
+            String line = reader.readLine();
+            while (line != null) {
+                oldContent.append(line).append(System.lineSeparator());
+                line = reader.readLine();
+            }
+            newContent = oldContent.toString();
+            for (Map.Entry<String, String> pair : new_vallue.entrySet()) {
+                newContent = newContent.replaceAll(pair.getKey(), pair.getValue());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                Objects.requireNonNull(reader).close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return newContent;
+    }
+
 }

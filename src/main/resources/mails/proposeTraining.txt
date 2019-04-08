@@ -1,0 +1,2 @@
+We are pleased to inform you, that @customer proposed you training.
+ Customer selected date : @date. Please let know if this date is ok.

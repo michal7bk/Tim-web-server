@@ -1,0 +1,2 @@
+Hi, We are pleased to inform you, that your training with @coach was accepted.
+Remember your training start : @start_time.

@@ -1,0 +1,1 @@
+Cutomer @customer asks for contact, please write to him at : @customer_mail
