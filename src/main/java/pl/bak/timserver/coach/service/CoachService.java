@@ -65,13 +65,13 @@ public class CoachService {
     public long countAcceptedTrainings(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
                 .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
-        return coach.getTrainings().stream().map(Training::isAccepted).count();
+        return coach.getTrainings().stream().filter(Training::isAccepted).count();
     }
 
     public long countProposedTrainings(Long coach_id) {
         Coach coach = coachRepository.findById(coach_id)
                 .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
-        return coach.getTrainings().stream().map(x -> !x.isAccepted()).count();
+        return coach.getTrainings().stream().filter(x -> !x.isAccepted()).count();
     }
 
     public long countUniqueCustomers(Long coach_id) {

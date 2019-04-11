@@ -65,13 +65,13 @@ public class CustomerService {
     public long countCompletedTrainings(Long customer_id) {
         Customer customer = customerRepository.findById(customer_id)
                 .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
-        return customer.getTrainings().stream().map(x -> x.getStartTime().isBefore(LocalDateTime.now())).count();
+        return customer.getTrainings().stream().filter(x -> x.getStartTime().isBefore(LocalDateTime.now())).count();
     }
 
     public long countPlannedTrainings(Long customer_id) {
         Customer customer = customerRepository.findById(customer_id)
                 .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
-        return customer.getTrainings().stream().map(x -> x.getStartTime().isAfter(LocalDateTime.now())).count();
+        return customer.getTrainings().stream().filter(x -> x.getStartTime().isAfter(LocalDateTime.now())).count();
     }
 
     public long countUniqueCoach(Long customer_id) {

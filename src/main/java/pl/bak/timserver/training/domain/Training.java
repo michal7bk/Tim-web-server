@@ -1,9 +1,6 @@
 package pl.bak.timserver.training.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.customer.domain.Customer;
 
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@ToString(exclude = {"coach"})
 @Table(name = "TRAINING")
 @NoArgsConstructor
 @Builder
