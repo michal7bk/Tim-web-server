@@ -23,13 +23,12 @@ public class ApplicationUserController {
         return applicationUserService.matchUser(userId);
     }
 
-    @PutMapping("/set-offline")
-    public void setOffline(@RequestBody() ApplicationUser applicationUser) {
-        applicationUserService.setOffline(applicationUser);
+    @PutMapping()
+    public void changeStatus(@RequestBody() ApplicationUser applicationUser) {
+        if (applicationUser.isActive())
+            applicationUserService.setOnline(applicationUser);
+        else
+            applicationUserService.setOffline(applicationUser);
     }
 
-    @PutMapping("/set-online")
-    public void setOnline(@RequestBody() ApplicationUser applicationUser) {
-        applicationUserService.setOnline(applicationUser);
-    }
 }
