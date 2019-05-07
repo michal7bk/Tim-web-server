@@ -1,8 +1,8 @@
 package pl.bak.timserver.customer.controller;
 
-import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import pl.bak.timserver.common.Counter;
 import pl.bak.timserver.customer.domain.Customer;
 import pl.bak.timserver.customer.domain.dto.CustomerInfoDto;
 import pl.bak.timserver.customer.service.CustomerService;
@@ -31,13 +31,13 @@ public class CustomerController {
         return customerService.findCustomer(customerId);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Customer create(@RequestBody @Valid Customer customer) {
         return customerService.save(customer);
     }
 
-    @RequestMapping(value = "/{customerId}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{customerId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("customerId") Long customerId) {
         customerService.delete(customerId);
@@ -49,24 +49,18 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/{customerId}/planned-trainings")
-    public String countPlannedTrainings(@PathVariable Long customerId) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.countPlannedTrainings(customerId)));
-        return result.toString();
+    public Counter countPlannedTrainings(@PathVariable Long customerId) {
+        return new Counter(customerService.countPlannedTrainings(customerId));
     }
 
     @GetMapping(value = "/{customerId}/completed-trainings")
-    public String countCompletedTrainings(@PathVariable Long customerId) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.countCompletedTrainings(customerId)));
-        return result.toString();
+    public Counter countCompletedTrainings(@PathVariable Long customerId) {
+        return new Counter(customerService.countCompletedTrainings(customerId));
     }
 
     @GetMapping(value = "{customerId}/unique-coaches")
-    public String countUniqueCoach(@PathVariable Long customerId) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(customerService.countUniqueCoach(customerId)));
-        return result.toString();
+    public Counter countUniqueCoach(@PathVariable Long customerId) {
+        return new Counter(customerService.countUniqueCoach(customerId));
     }
 
     @GetMapping(value = "{customerId}/ask-for-contact")

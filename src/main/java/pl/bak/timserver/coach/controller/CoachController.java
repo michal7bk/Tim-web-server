@@ -1,12 +1,12 @@
 package pl.bak.timserver.coach.controller;
 
-import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.bak.timserver.coach.domain.Coach;
 import pl.bak.timserver.coach.domain.dto.CoachInfoDto;
 import pl.bak.timserver.coach.domain.dto.CoachTrainingsDto;
 import pl.bak.timserver.coach.service.CoachService;
+import pl.bak.timserver.common.Counter;
 import pl.bak.timserver.training.domain.dto.TrainingsListDto;
 
 import javax.validation.Valid;
@@ -32,47 +32,41 @@ public class CoachController {
         return coachService.findCoach(coachId);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Coach createCoach(@RequestBody @Valid Coach coach) {
         return coachService.save(coach);
     }
 
-    @RequestMapping(value = "/{coachId}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{coachId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("coachId") Long coachId) {
         coachService.delete(coachId);
     }
 
-    @GetMapping(value = "/{coach_id}/accepted-trainings-list")
-    public List<TrainingsListDto> findAcceptedTrainings(@PathVariable Long coach_id) {
-        return coachService.findAcceptedTrainings(coach_id);
+    @GetMapping(value = "/{coachId}/accepted-trainings-list")
+    public List<TrainingsListDto> findAcceptedTrainings(@PathVariable Long coachId) {
+        return coachService.findAcceptedTrainings(coachId);
     }
 
-    @GetMapping(value = "/{coach_id}/proposed-trainings-list")
-    public List<TrainingsListDto> findProposedTrainings(@PathVariable Long coach_id) {
-        return coachService.findProposedTrainings(coach_id);
+    @GetMapping(value = "/{coachId}/proposed-trainings-list")
+    public List<TrainingsListDto> findProposedTrainings(@PathVariable Long coachId) {
+        return coachService.findProposedTrainings(coachId);
     }
 
-    @GetMapping(value = "/{coach_id}/accepted-trainings")
-    public String countAcceptedTrainings(@PathVariable Long coach_id) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(coachService.countAcceptedTrainings(coach_id)));
-        return result.toString();
+    @GetMapping(value = "/{coachId}/accepted-trainings")
+    public Counter countAcceptedTrainings(@PathVariable Long coachId) {
+        return new Counter(coachService.countAcceptedTrainings(coachId));
     }
 
-    @GetMapping(value = "/{coach_id}/proposed-trainings")
-    public String countProposedTrainings(@PathVariable Long coach_id) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(coachService.countProposedTrainings(coach_id)));
-        return result.toString();
+    @GetMapping(value = "/{coachId}/proposed-trainings")
+    public Counter countProposedTrainings(@PathVariable Long coachId) {
+        return new Counter(coachService.countProposedTrainings(coachId));
     }
 
-    @GetMapping(value = "{coach_id}/unique-customers")
-    public String countUniqueCustomers(@PathVariable Long coach_id) {
-        JsonObject result = new JsonObject();
-        result.addProperty("count", String.valueOf(coachService.countUniqueCustomers(coach_id)));
-        return result.toString();
+    @GetMapping(value = "{coachId}/unique-customers")
+    public Counter countUniqueCustomers(@PathVariable Long coachId) {
+        return new Counter(coachService.countUniqueCustomers(coachId));
     }
 
 

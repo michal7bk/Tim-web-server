@@ -62,21 +62,21 @@ public class CustomerService {
     }
 
 
-    public long countCompletedTrainings(Long customer_id) {
-        Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
+    public long countCompletedTrainings(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customerId));
         return customer.getTrainings().stream().filter(x -> x.getStartTime().isBefore(LocalDateTime.now())).count();
     }
 
-    public long countPlannedTrainings(Long customer_id) {
-        Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
+    public long countPlannedTrainings(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customerId));
         return customer.getTrainings().stream().filter(x -> x.getStartTime().isAfter(LocalDateTime.now())).count();
     }
 
-    public long countUniqueCoach(Long customer_id) {
-        Customer customer = customerRepository.findById(customer_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customer_id));
+    public long countUniqueCoach(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ObjectNotFoundException(Customer.class, customerId));
         return customer.getTrainings().stream().filter(distinctByKey(Training::getCoach)).count();
     }
 

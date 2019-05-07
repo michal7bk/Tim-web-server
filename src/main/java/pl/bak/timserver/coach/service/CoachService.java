@@ -62,21 +62,21 @@ public class CoachService {
 
     }
 
-    public long countAcceptedTrainings(Long coach_id) {
-        Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
+    public long countAcceptedTrainings(Long coachId) {
+        Coach coach = coachRepository.findById(coachId)
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coachId));
         return coach.getTrainings().stream().filter(Training::isAccepted).count();
     }
 
-    public long countProposedTrainings(Long coach_id) {
-        Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
+    public long countProposedTrainings(Long coachId) {
+        Coach coach = coachRepository.findById(coachId)
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coachId));
         return coach.getTrainings().stream().filter(x -> !x.isAccepted()).count();
     }
 
-    public long countUniqueCustomers(Long coach_id) {
-        Coach coach = coachRepository.findById(coach_id)
-                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coach_id));
+    public long countUniqueCustomers(Long coachId) {
+        Coach coach = coachRepository.findById(coachId)
+                .orElseThrow(() -> new ObjectNotFoundException(Coach.class, coachId));
         return coach.getTrainings().stream().filter(distinctByKey(Training::getCustomer)).count();
     }
 

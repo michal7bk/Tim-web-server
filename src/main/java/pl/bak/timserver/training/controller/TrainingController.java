@@ -21,12 +21,12 @@ public class TrainingController {
     }
 
 
-    @GetMapping(value = "/{training_id}")
-    public Training findTraining(@PathVariable Long training_id) {
-        return trainingService.findTraining(training_id);
+    @GetMapping(value = "/{trainingId}")
+    public Training findTraining(@PathVariable Long trainingId) {
+        return trainingService.findTraining(trainingId);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Training create(@RequestBody @Valid Training Training) {
         return trainingService.save(Training);
@@ -38,28 +38,28 @@ public class TrainingController {
         return trainingService.proposeTraining(newTrainingDto);
     }
 
-    @PutMapping(value = "/{training_id}/propose")
-    public TrainingDto proposeNewDate(@RequestBody @Valid NewDateTrainingDto newDateTrainingDto, @PathVariable Long training_id) {
-        newDateTrainingDto.setId(training_id);
+    @PutMapping(value = "/{trainingId}/propose")
+    public TrainingDto proposeNewDate(@RequestBody @Valid NewDateTrainingDto newDateTrainingDto, @PathVariable Long trainingId) {
+        newDateTrainingDto.setId(trainingId);
         return trainingService.proposeNewDate(newDateTrainingDto);
     }
 
-    @RequestMapping(value = "/{training_id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{trainingId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("training_id") Long training_id) {
-        trainingService.delete(training_id);
+    public void delete(@PathVariable("trainingId") Long trainingId) {
+        trainingService.delete(trainingId);
     }
 
-    @PutMapping(value = "/{training_id}/accept")
+    @PutMapping(value = "/{trainingId}/accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void acceptTraining(@PathVariable Long training_id) {
-        trainingService.acceptTraining(training_id);
+    public void acceptTraining(@PathVariable Long trainingId) {
+        trainingService.acceptTraining(trainingId);
     }
 
-    @PutMapping(value = "/{training_id}/cancel")
+    @PutMapping(value = "/{trainingId}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelTraining(@PathVariable Long training_id) {
-        trainingService.cancelTraining(training_id);
+    public void cancelTraining(@PathVariable Long trainingId) {
+        trainingService.cancelTraining(trainingId);
     }
 
 }
