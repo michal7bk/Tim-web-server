@@ -15,7 +15,7 @@ public class ApplicationUserController {
 
     @PostMapping("/sign-up")
     public void signUp(@RequestBody ApplicationUser applicationUser) {
-        applicationUserService.saveApplicationUser(applicationUser);
+        applicationUserService.tryToSaveUser(applicationUser);
     }
 
     @GetMapping("/{userId}")
@@ -23,12 +23,9 @@ public class ApplicationUserController {
         return applicationUserService.matchUser(userId);
     }
 
-    @PutMapping()
-    public void changeStatus(@RequestBody() ApplicationUser applicationUser) {
-        if (applicationUser.isActive())
-            applicationUserService.setOnline(applicationUser);
-        else
-            applicationUserService.setOffline(applicationUser);
-    }
+    @PutMapping("/{userId}")
+    public void changeStatus(@PathVariable() Long userId) {
+        applicationUserService.changeStatus(userId);
+            }
 
 }

@@ -63,7 +63,7 @@ public class CustomerController {
         return new Counter(customerService.countUniqueCoach(customerId));
     }
 
-    @GetMapping(value = "{customerId}/ask-for-contact")
+    @GetMapping(value = "{customerId}/contact")
     public void askForContact(@PathVariable Long customerId, @RequestParam String email) {
         customerService.askCoachForContact(customerId, email);
     }
