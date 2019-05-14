@@ -101,9 +101,10 @@ public class ApplicationUserService {
         }
     }
 
-    void changeStatus(Long userId) {
+    void changeStatus(Long userId,Boolean status ) {
         ApplicationUser applicationUser = applicationUserRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(ApplicationUser.class, userId));
+        applicationUser.setActive(status);
         if (applicationUser.isActive())
             setOnline(applicationUser);
         else

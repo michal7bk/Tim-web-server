@@ -24,8 +24,8 @@ public class ApplicationUserController {
     }
 
     @PutMapping("/{userId}")
-    public void changeStatus(@PathVariable() Long userId) {
-        applicationUserService.changeStatus(userId);
+    public void changeStatus(@PathVariable() Long userId ,@RequestParam Boolean status) {
+        applicationUserService.changeStatus(userId, status);
             }
 
 }
